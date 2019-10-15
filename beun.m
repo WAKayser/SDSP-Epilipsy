@@ -13,6 +13,8 @@ segments = reshape(signal, segmentSize, numSegments);
 
 sys = ar(signal(10000:17500), orderFilter, 'yw', 'Ts', 1/250);
 
+power(numSegments) = 0;
+
 for t = 1:numSegments
     power(t) = norm(filter(sys.A, 1, segments(:, t)));
 end
