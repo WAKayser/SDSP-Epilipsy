@@ -3,7 +3,7 @@ clear;
 load('data_assignment.mat');
 signal = EEG(12,:);
 
-segmentSize = 750;
+segmentSize = 1000;
 stepSize = 500;
 orderFilter = 1;
 
@@ -27,9 +27,10 @@ hold on;
 plot(linspace(0, length(signal)/250, length(signal)), signal)
 
 
-% 
-[x, I] = max(diff(power));
-xline((segmentSize/2 + I * stepSize)/250, 'LineWidth', 3, 'Color', 'green');
+% wip
+data = reshape(diff(power), 2, length(diff(power))/2);
+[x, I] = max(data(1, :) + data(2, :));
+xline(2 *(segmentSize/2 + I * stepSize)/250, 'LineWidth', 3, 'Color', 'green');
 
 
 title('Captured seizure characteristic');
