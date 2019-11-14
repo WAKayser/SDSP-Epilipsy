@@ -4,21 +4,21 @@ signal = EEG(12,:);
 
 hold off;
 
-before(1, 199) = 0;
-during(1, 199) = 0;
+before(1, 499) = 0;
+during(1, 499) = 0;
 
-for i = 1:50
-   before = before + abs(xcorr(signal(1+(i-1)*100:i*100)));   
+for i = 1:20
+   before = before + xcorr(signal(1+(i-1)*250:i*250));
+   during = during + xcorr(signal(12501+(i-1)*250:12500+i*250)); 
 end
 
-for i = 1:50
-   during = during + abs(xcorr(signal(12501+(i-1)*100:12500+i*100)));   
-end
+bias = xcorr(ones(250, 1));
 
-plot(before/50);
+plot(linspace(-125, 125, 499), 10 * log10((before)./bias'));
 hold on;
-plot(during/50);
-set(gca, 'YScale', 'log');
-ylim([1 10^8]);
+plot(linspace(-125, 125, 499), 10 * log10((during)./bias'));
 legend('Before seizure','During seizure')
-title('Averaged autocorrelation at different times');
+title('Autocorrelation at different times');
+ylabel('correlation (dB)');
+xlabel('lags');
+set(gca,'FontSize',12)

@@ -1,24 +1,29 @@
 clear;
+% close all;
 
 load('data_assignment.mat');
-signal = EEG(12,:);
+signal = EEG(15,:);
 
-segmentSize = 500;
+segmentSize = 250;
 stepSize = 100;
 orderFilter = 4;
 numSegments = ceil((length(signal)-segmentSize)/stepSize);
 
-power(orderFilter + 1, numSegments) = 0;
+power(numSegments) = 0;
 
 for t = 1:numSegments
     start = 1 + (t-1) * stepSize;
     final = segmentSize + (t-1) * stepSize;
     sys = ar(signal(start:final), orderFilter, 'yw', 'Ts', 1/250);
-    power(:, t) = sys.NoiseVariance;
+    power(t) = sys.Report.Fit.FitPercent*sys.NoiseVariance;
 end
 
-hold off;
-plot(linspace(0, length(signal)/250, numSegments), power);
-    names = num2str([1:(orderFilter + 1)]');
+hold on;
+plot(linspace(0, length(signal)/250, numSegments), power/5);
+plot(linspace(0, length(signal)/250, length(signal)), signal);
+legend('NoiseVariance combined with inverse of model error', 'Original Signal')
     
-title('Noise variance given by AR model')
+title('Model Fitting Estimator for Seizures')
+ylabel('Amplitude')
+xlabel('Time (s)')
+set(gca,'FontSize',12)
